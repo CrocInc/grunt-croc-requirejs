@@ -16,6 +16,7 @@ exports['require'] = {
 
 	test.equal(true, true);
 
+	// TODO:
 	// We need to test:
 	// - root.css was included into generic.css
 	// - dashboard.hbs was compiled and included into main.js
