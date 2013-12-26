@@ -1,6 +1,6 @@
 /*
  * grunt-croc-requirejs
- * https://github.com/Shrike/grunt-croc-requirejs
+ * https://github.com/CrocInc/grunt-croc-requirejs
  *
  * Copyright (c) 2013 Sergei Dorogin
  * Licensed under the MIT license.
@@ -10,64 +10,79 @@
 
 module.exports = function(grunt) {
 
-  // Project configuration.
-  grunt.initConfig({
-    jshint: {
-      all: [
-        'Gruntfile.js',
-        'tasks/*.js',
-        '<%= nodeunit.tests %>',
-      ],
-      options: {
-        jshintrc: '.jshintrc',
-      },
-    },
+	// Project configuration.
+	grunt.initConfig({
+		// Before generating any new files, remove any previously-created files.
+		clean: {
+			test: ['test/output'],
+		},
 
-    // Before generating any new files, remove any previously-created files.
-    clean: {
-      tests: ['tmp'],
-    },
+		concat: {
+			options: {
+				process: function(src, filepath) {
+					return 'var require = ' + src + ';';
+				},
+			},
+			// create rjs config 
+			test: {
+				src: 'test/input/require.config.json',
+				dest: 'test/input/require.config.js'
+			},
+		},
 
-    // Configuration to be run (and then tested).
-    rjs: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!',
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
-      },
-    },
+		copy: {
+			test: {
+				files: [{
+					src: '**/*.*',
+					expand: true,
+					cwd: 'rjs',
+					dest: 'test/input/lib/'
+				}]
+			}	
+		},
 
-    // Unit tests.
-    nodeunit: {
-      tests: ['test/*_test.js'],
-    },
+		// rjs task to be tested via test application in 'test/input' folder
+		rjs: {
+			test: {
+				options: {
+					input: 'test/input',
+					output: 'test/output',
+					requireConfigFile: 'require.config.json',
+					requireConfigOutput: {
+						paths: {
+							handlebars: "vendor/handlebars/handlebars.runtime"
+						}
+					},
+					modules: ['main'],
+					genericCssUrl: 'content/generic.css',
+					optimizeJs: 'none', // 'none', 'uglify2',
+					optimizeCss: 'standard',
+					generateSourceMaps: false,
+					bundledLocale: 'ru',
+					keepBuildDir: false
+				}
+			}
+		},
 
+		// TODO: Unit tests
+		nodeunit: {
+			tests: ['test/*_test.js'],
+		}
   });
 
   // Actually load this plugin's task(s).
   grunt.loadTasks('tasks');
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
-  // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'rjs', 'nodeunit']);
+  // "test": clean output -> execute rjs task -> check/assert (TODO)
+  grunt.registerTask('test', ['clean', 'copy', 'concat', 'rjs', 'nodeunit']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['test']);
 
 };

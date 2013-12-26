@@ -17,7 +17,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/Shrike/grunt-croc-requirejs/blob/master/LICENSE-MIT"
+      "url": "https://github.com/CrocInc/grunt-croc-requirejs/blob/master/LICENSE-MIT"
     }
   ],
   "main": "Gruntfile.js",
@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.4.1",
     "grunt-contrib-clean": "~0.4.0",
     "grunt-contrib-nodeunit": "~0.2.0"
   },
@@ -38,7 +39,8 @@
     "grunt",
     "CROC",
     "RequireJS",
-    "Handlebars"
+    "Handlebars",
+    "optimization"
   ],
   "dependencies": {
     "requirejs": "~2.1.8"

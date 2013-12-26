@@ -40,11 +40,11 @@ define([
 ], function ($) {
 });
 ```  
-Here we imported a css-file (`jquery.blocked.css`) as AMD-module.   
-During run-time `xcss` plugin requests the css-file via XHR and adds its content into STYLE tag under HEAD. NOTE: All imports of css files in all modules use a single STYLE tag to be IE-friendly.     
-During build-time `xcss` plugin writes down content of the css-file into a single file (by default 'generic.css').
+Here we imported a CSS-file (`jquery.blocked.css`) as AMD-module.   
+During run-time `xcss` plugin requests the css-file via XHR and adds its content into STYLE tag under HEAD. NOTE: All imports of CSS-files in all modules use a single STYLE tag to be IE-friendly.     
+During build-time `xcss` plugin writes down content of the css-file into a single file (by default 'generic.css', it's controlled by `genericCssUrl` option).
  
-For loading CSS files the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered цшер alias "text".
+For loading CSS-files the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
 ### Handlebars templates 
 Usage example:
@@ -54,7 +54,10 @@ define([
 ], function (defaultTemplate) {
 });
 ```
-Here we imported a hbs-file (`lib/ui/templates/Carousel.hbs`) as AMD-mobule. hbs-files are Handlebars templates. Actual file extension doesn't matter much. But it's usefull to name them as '*.hbs' due to HB-templates support in WebStorm and VisualStudio.
+
+Here we imported a hbs-file (`lib/ui/templates/Carousel.hbs`) as AMD-mobule. hbs-files are Handlebars templates. Actual files extension doesn't matter much. But it's usefull to name them as '*.hbs' due to HB-templates support in WebStorm and Visual Studio.
+
+For loading templates (*.hbs) the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
 
 ## The `rjs` task
@@ -194,7 +197,7 @@ Type: `String`
 Default value: `content/generic.css`  
 Required: no  
 
-Path to generic.css - css file for combining all css imported with xcss.js. 
+Path to generic.css - css file for combining all css imported via xcss.js. 
 
 #### bundledLocale
 Type: `String`  
@@ -205,22 +208,77 @@ A locale to bundle - i.e. resources imported via i18n rjs plugin will be include
 The value will be used as `locale` option for r.js.
 
 
+### Project structure assumptions
+
+The plugin assumes that client-side of a project has the following structure:
+
+* all client stuff is inside a single folder (let's call it _client root_);
+* client root contains _root modules_ - usually these are scripts which are loaded by RequireJS directly (e.g. via `data-main` attribute) - i.e. is `main` scripts in terms of RequireJS;
+* client root contains subfolders which are treated as `layers`. Usually we have `app`, `lib` and `vendor` folders (the app can also have any other folders). Scripts (*.js) which are in these layer-folders will be bundled together.
+
+
+### Core concepts
+
+#### rjs optimizer
+RequireJS provides rjs optimizer for building optimized version of apps. rjs is a script to be run under node.js. It has pletly of options - see [the doc](http://requirejs.org/docs/optimization.html).
+This plugin grunt-croc-requirejs is just a wrapper around rjs optimizer.
+
+
+#### Root modules
+`modules` option can specifies a bunch of files which will be treated as _root modules_. If `modules` options isn't specified then all *.js under `inputDir` will be treated as root modules.
+rjs optimizer has two modes: optimizing directory and optimizing files. The plugin uses the latter mode. Files for rjs optimizer are specified in `modules` option. So these files we're callign as _root modules_.
+
+#### Layers
+
+By default if you supply a main script to rjs optimizer it'll combine all depedency tree into a single minified script. rjs does support layers and shared scripts for multi-page applications - [see this official sample](https://github.com/requirejs/example-multipage). But it requires to do a lot of configuration.
+This plugin supports splitting scripts onto layers depending on folder structure. For example let's consider an application has the following structure:
+ 
+```
+───Server
+   ├───client
+   │   ├───app
+   │   │   ├───templates
+   │   │   └───ui
+   │   │       └───styles
+   │   ├───boot
+   │   ├───content
+   │   │   ├───fonts
+   │   │   └───images
+   │   ├───lib
+   │   │   └───...
+   │   ├───modules
+   │   │   └───...
+   │   ├───shim
+   │   ├───vendor
+   │   │   └───...
+   │   └───main.js
+```
+Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layer names. After optimization we'll get:
+
+* main.js - all scripts imported from main.js except those which included into lib/vendor layers 
+* lib-layer.js - all scripts from lib folder (which are used by other scripts starting from main.js) 
+* vendor-layer.js - all scripts from vendor folder
+
+
+### The process in-depth
+Here we'll review the whole building process in depth.
+
+#### step 0 
+Copy all inputDit into buildDir (by default `.make_build`)
+
+#### step 1 "finding depedencies"
+
+On this stage we're running rjs optimizer for finding modules dependencies. This stage is `prepare`. 
+
+TODO
+
+#### step 2 "optimization"
+TODO
+
 
 ### Usage Examples
 
-#### Default Options
-In this example, the default options are used to do something with whatever.
-
-```js
-grunt.initConfig({
-  make: {
-    options: {},
-
-  },
-})
-```
-
-####
+#### Common options
 ```js
 grunt.initConfig({
 		make: {
