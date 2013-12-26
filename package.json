@@ -1,6 +1,6 @@
 {
   "name": "grunt-croc-requirejs",
-  "description": "Optimize js/css/templates in RequireJS-based application spitting modules onto layers",
+  "description": "Grunt plugin for building RequireJS-based applications with optimizing js, css and Handlebars templates",
   "version": "0.1.0",
   "homepage": "https://github.com/CrocInc/grunt-croc-requirejs",
   "author": {
