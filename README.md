@@ -283,7 +283,7 @@ TODO
 #### Common options
 ```js
 grunt.initConfig({
-		make: {
+		rjs: {
 			dist: {
 				options: {
 					input: 'dist/dev',
