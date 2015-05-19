@@ -21,16 +21,15 @@ grunt.loadNpmTasks('grunt-croc-requirejs');
 ```
 Or just use `matchdep` module.
 
-NOTE: loadNpmTasks will deprecate in Grunt 0.5
 
 ## Overview
-Why do we need another rjs grunt task if there're [plenty of them](https://npmjs.org/package/grunt-contrib-requirejs)? There is a major difference - this task generates "layered" application, i.e. all js scripts are not just included into a single file but instead they are included into several files - "layers". Here's motivation for such an approach.  
-Usually a front-end application consist of a bunch of scripts. Some of them belongs to the application but other ones are some 3rd party libraries. When an application is being developed app scripts are usually changed often but 3rd scripts much more rare. So if we combine all scripts into a single one then users will have to redownload this script on every change.
+Why do we need another Grunt task for merging RequireJS modules if there're [plenty of them](https://npmjs.org/package/grunt-contrib-requirejs)? There is a major difference - this task generates a "layered" application, i.e. all js scripts are merged nit into a single file but instead into several files ("layers"). Here's motivation for such an approach.  
+Usually a front-end application consists of a bunch of scripts. Some of them belongs to the application but other ones are some 3rd-party libraries. When an application is being developed app scripts are usually changed often but 3rd-party scripts much more rarely. So if we combine all scripts into a single one then users will have to redownload that script on every change.
 This task allow to split scripts into _layers_. 
 
 Also the plugin provides some usefull optimization tools which allows you to:  
 
-* combine all CSS files imported by modules into a single script ("generic.css"). 
+* combine all CSS files imported by AMD modules into a single css-script ("generic.css"). 
 * compile and combine all Handlebars-templates imported by modules
 
 ### CSS
@@ -44,7 +43,7 @@ define([
 ```  
 Here we imported a CSS-file (`jquery.blocked.css`) as AMD-module.   
 During run-time `xcss` plugin requests the css-file via XHR and adds its content into STYLE tag under HEAD. NOTE: All imports of CSS-files in all modules use a single STYLE tag to be IE-friendly.     
-During build-time `xcss` plugin writes down content of the css-file into a single file (by default 'generic.css', it's controlled by `genericCssUrl` option).
+During build-time `xcss` plugin adds content of the css-file into a single file (by default 'generic.css', it's controlled by `genericCssUrl` option).
  
 For loading CSS-files the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
@@ -57,8 +56,7 @@ define([
 });
 ```
 
-Here we imported a hbs-file (`lib/ui/templates/Carousel.hbs`) as AMD-mobule. hbs-files are Handlebars templates. Actual files extension doesn't matter much. But it's usefull to name them as '*.hbs' due to HB-templates support in WebStorm and Visual Studio.
-
+Here we imported a Handlebars template (`lib/ui/templates/Carousel.hbs`) as AMD-mobule.  
 For loading templates (*.hbs) the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
 
@@ -206,7 +204,7 @@ Type: `String`
 Default value: `undefined`  
 Required: no  
 
-A locale to bundle - i.e. resources imported via i18n rjs plugin will be included into optimized js-modules and all other resources will be left unchanged.   
+A locale to bundle - i.e. resources imported via `i18n` rjs plugin will be included into optimized js-modules and all other resources will be left unchanged.   
 The value will be used as `locale` option for r.js.
 
 
@@ -215,7 +213,7 @@ The value will be used as `locale` option for r.js.
 The plugin assumes that client-side of a project has the following structure:
 
 * all client stuff is inside a single folder (let's call it _client root_);
-* client root contains _root modules_ - usually these are scripts which are loaded by RequireJS directly (e.g. via `data-main` attribute) - i.e. is `main` scripts in terms of RequireJS;
+* client root contains _root modules_ - usually these are scripts which are loaded by RequireJS directly (e.g. via `data-main` attribute) - i.e. they are `main` scripts in terms of RequireJS;
 * client root contains subfolders which are treated as `layers`. Usually we have `app`, `lib` and `vendor` folders (the app can also have any other folders). Scripts (*.js) which are in these layer-folders will be bundled together.
 
 
@@ -255,27 +253,11 @@ This plugin supports splitting scripts onto layers depending on folder structure
    │   │   └───...
    │   └───main.js
 ```
-Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layer names. After optimization we'll get:
+Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layers names. After optimization we'll get:
 
 * main.js - all scripts imported from main.js except those which included into lib/vendor layers 
 * lib-layer.js - all scripts from lib folder (which are used by other scripts starting from main.js) 
 * vendor-layer.js - all scripts from vendor folder
-
-
-### The process in-depth
-Here we'll review the whole building process in depth.
-
-#### step 0 
-Copy all inputDit into buildDir (by default `.make_build`)
-
-#### step 1 "finding depedencies"
-
-On this stage we're running rjs optimizer for finding modules dependencies. This stage is `prepare`. 
-
-TODO
-
-#### step 2 "optimization"
-TODO
 
 
 ### Usage Examples
