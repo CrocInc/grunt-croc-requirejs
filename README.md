@@ -1,7 +1,5 @@
 # grunt-croc-requirejs
 
-[![NPM](https://nodei.co/npm/grunt-croc-requirejs.png?downloads=true&stars=true)](https://nodei.co/npm/grunt-croc-requirejs/)
-
 > Build RequireJS-based applications optimizing js, css and Handlebars templates.
 
 
@@ -23,16 +21,17 @@ Or just use `matchdep` module.
 
 
 ## Overview
-Why do we need another Grunt task for merging RequireJS modules if there're [plenty of them](https://npmjs.org/package/grunt-contrib-requirejs)? There is a major difference - this task generates a "layered" application, i.e. all js scripts are merged nit into a single file but instead into several files ("layers"). Here's motivation for such an approach.  
-Usually a front-end application consists of a bunch of scripts. Some of them belongs to the application but other ones are some 3rd-party libraries. When an application is being developed app scripts are usually changed often but 3rd-party scripts much more rarely. So if we combine all scripts into a single one then users will have to redownload that script on every change.
-This task allow to split scripts into _layers_. 
+Why do we need another Grunt task for merging RequireJS modules  if there're [plenty of them](https://npmjs.org/package/grunt-contrib-requirejs)? There is a major difference - this task generates a _layered_ application, i.e. all js scripts are not just combined into a single file but instead they are combined into several files - "layers". Here's motivation for such an approach.  
+Usually a front-end application consists of a bunch of scripts. Some of them belongs to the application but other ones are some 3rd-party libraries. When an application is being developed app scripts are usually changed often but 3rd-party scripts much more rarely. So if we combine all scripts into a single one "mega" script then end-users of the application will have to redownload that script on every change.  
+This task allows to split scripts into _layers_ so end-users will redownload only changed part of the application.  
 
 Also the plugin provides some usefull optimization tools which allows you to:  
 
-* combine all CSS files imported by AMD modules into a single css-script ("generic.css"). 
-* compile and combine all Handlebars-templates imported by modules
+* combine all CSS files imported by AMD modules into a single CSS-script ("generic.css")  
+* precompile Handlebars-templates imported by modules
 
 ### CSS
+`xcss` plugin allows a module to import its CSS dependencies as regular AMD-modules.  
 Usage example:  
 ```js
 define([
@@ -42,21 +41,32 @@ define([
 });
 ```  
 Here we imported a CSS-file (`jquery.blocked.css`) as AMD-module.   
-During run-time `xcss` plugin requests the css-file via XHR and adds its content into STYLE tag under HEAD. NOTE: All imports of CSS-files in all modules use a single STYLE tag to be IE-friendly.     
-During build-time `xcss` plugin adds content of the css-file into a single file (by default 'generic.css', it's controlled by `genericCssUrl` option).
+In run-time `xcss` plugin requests the CSS-file via XHR and adds its content into `STYLE` tag (under `HEAD`). So in a development environment CSS-script are fetched and added into page's `STYLE`. The nice thing is that modules control their CSS-files on their own.  
+NOTE: All imports of CSS-files in all modules use a single `STYLE` tag to be IE-friendly.  
+
+In build-time `xcss` plugin writes down content of CSS-files into a single file (by default it's 'generic.css', but can be controlled by `genericCssUrl` option). So at the end we'll have a single CSS-file with content of all CSS-scripts imported via `xcss` plugin. Obviously that script should be loaded via `link`:  
+```html
+<link rel='stylesheet' href='/client/content/generic.css' type='text/css'>
+```
+But it's not enough. In run-time for optimized (or built) application `xcss` plugin will do nothing. It becomes just a stub. So in runtime there is no any overhead for componentization.  
  
 For loading CSS-files the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
 ### Handlebars templates 
+`xhtmpl` plugin allows a module to import its Handlebars dependencies as regular AMD-modules.  
 Usage example:
 ```js
 define([
-	"xhtmpl!lib/ui/templates/Carousel.hbs"
-], function (defaultTemplate) {
+	"xhtmpl!lib/ui/Dialog/template.hbs"
+], function (template) {
 });
 ```
 
-Here we imported a Handlebars template (`lib/ui/templates/Carousel.hbs`) as AMD-mobule.  
+Here we imported a hbs-file (`lib/ui/Dialog/template.hbs`) as AMD-mobule. hbs-files are Handlebars templates. Actual files extension doesn't matter much. But it's usefull to name them as '*.hbs' due to HB-templates support in WebStorm and Visual Studio.  
+
+In runtime the plugin fetches specified template and compiles it via [Handlebars](http://handlebarsjs.com/). Handlebars compiles templates into js code (functions).  
+In build-time the plugin emits template's compiled js code as an AMD-module (the module returns template's function). In runtime for optimized (built) application `xhtmlp` plugin just returns already compiled function. So there is no compilation (i.e. overhead) in runtime for optimized applications.  
+
 For loading templates (*.hbs) the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
 
@@ -81,12 +91,12 @@ grunt.initConfig({
 ### Options
 
 #### makeConfigFile
-Type: `String`
-Default value: `make.config.json`
-Required: no
+Type: `String`  
+Default value: `make.config.json`  
+Required: no  
 
-Build config file name. If the file exists then task will read its configuration from it. So if you create 'make.config.json' besides Gruntfile.js then it will be used as task's config.
-Please note then parameters values from Gruntfile.js will overwrite values from external config file. 
+Build config file name. If the file exists then task will read its configuration from it. So if you create `make.config.json` beside `Gruntfile.js` then it will be used as task's config.  
+Please note that parameters values from `Gruntfile.js` will overwrite values from external config file.  
 
 #### input
 Type: `String`  
@@ -213,7 +223,7 @@ The value will be used as `locale` option for r.js.
 The plugin assumes that client-side of a project has the following structure:
 
 * all client stuff is inside a single folder (let's call it _client root_);
-* client root contains _root modules_ - usually these are scripts which are loaded by RequireJS directly (e.g. via `data-main` attribute) - i.e. they are `main` scripts in terms of RequireJS;
+* client root contains _root modules_ - usually these are scripts which are loaded by RequireJS directly (e.g. via `data-main` attribute) - i.e. `main` scripts in terms of RequireJS;
 * client root contains subfolders which are treated as `layers`. Usually we have `app`, `lib` and `vendor` folders (the app can also have any other folders). Scripts (*.js) which are in these layer-folders will be bundled together.
 
 
@@ -253,7 +263,7 @@ This plugin supports splitting scripts onto layers depending on folder structure
    │   │   └───...
    │   └───main.js
 ```
-Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layers names. After optimization we'll get:
+Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layers names. After optimization we'll get:  
 
 * main.js - all scripts imported from main.js except those which included into lib/vendor layers 
 * lib-layer.js - all scripts from lib folder (which are used by other scripts starting from main.js) 
@@ -288,10 +298,11 @@ grunt.initConfig({
 ```
 
 ## Release History
+ * 2015-09-01	v0.1.0  Updated README
  * 2013-12-03	v0.1.0	Task submitted
  * 2013-08-27	v0.0.0	Work started
 
 ---
 Task submitted by [Sergei Dorogin](http://dorogin.com)
 
-(c) Copyright CROC Inc. 2013
+(c) Copyright CROC Inc. 2013-2015
