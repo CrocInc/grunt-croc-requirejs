@@ -1,5 +1,7 @@
 # grunt-croc-requirejs
 
+[![NPM](https://nodei.co/npm/grunt-croc-requirejs.png?downloads=true&downloadRank=true)](https://nodei.co/npm/grunt-croc-requirejs/)
+
 > Build RequireJS-based applications optimizing js, css and Handlebars templates.
 
 
