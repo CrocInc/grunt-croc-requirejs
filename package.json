@@ -43,6 +43,6 @@
     "optimization"
   ],
   "dependencies": {
-    "requirejs": "~2.1.8"
+    "requirejs": "^2.1.21"
   }
 }
