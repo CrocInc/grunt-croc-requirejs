@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 	grunt.registerMultiTask('rjs', 'Optimize RequireJS-based application', function() {
 		var fs = require("fs"),
 			path = require("path"),
-			requirejs = require("../node_modules/requirejs/bin/r.js"),
+			requirejs = require("requirejs/bin/r.js"),
 			lang = require('./lib/lang'),
 			file = require("./lib/file.js");
 
