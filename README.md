@@ -300,6 +300,7 @@ grunt.initConfig({
 ```
 
 ## Release History
+ * 2015-12-07	v0.1.3	fix for NPM3 support
  * 2015-09-01	v0.1.0  Updated README
  * 2013-12-03	v0.1.0	Task submitted
  * 2013-08-27	v0.0.0	Work started
