@@ -1,8 +1,7 @@
 /*
  * grunt-croc-requirejs
  * https://github.com/CrocInc/grunt-croc-requirejs
- *
- * Copyright (c) 2013 Sergei Dorogin
+ * Copyright (c) 2013-2016 Croc Inc.
  * Licensed under the MIT license.
  */
 
