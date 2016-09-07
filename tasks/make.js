@@ -1,7 +1,7 @@
 ﻿/*
  * grunt-croc-requirejs
- * Copyright (c) 2013 Croc Inc.
  * https://github.com/CrocInc/grunt-croc-requirejs
+ * Copyright (c) 2013-2016 Croc Inc.
  * Licensed under the MIT license.
  */
 
@@ -258,6 +258,7 @@ module.exports = function(grunt) {
 				// The callback wraps modules content into several nested 'require' calls (one for each layer modules)
 				onBuildWrite: function (moduleName, modulePath, contents) {
 					if (contents.indexOf("require(") < 0) { return contents; }
+					if (modules.indexOf(moduleName) < 0) { return contents; }
 					var start = "", end = "";
 					layers.forEach(function (l) {
 						start += "require([\"" + l.name + "\"], function () {\n";
