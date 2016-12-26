@@ -6,7 +6,6 @@
 
 
 ## Getting Started
-This plugin requires Grunt `~0.4.1`
 
 If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
@@ -301,9 +300,9 @@ grunt.initConfig({
 ```
 
 ### Passing options for UglifyJS
-If `optimizeJs` option specified as `uglify` then output files will be processed with [UglifyJS](https://github.com/mishoo/UglifyJS). It also has differeny options which you'd want to override.
+If `optimizeJs` option specified as `uglify` then output files will be processed with [UglifyJS](https://github.com/mishoo/UglifyJS). It also has different options which you'd want to override.
 For example, by default UglifyJS removes quotes for keys if they are not reserved words. This behavior can lead to runtime errors in IE8.  
-Here's example how to pass options to UglifyJS via Grunt task's options:
+Here's example how to pass options into UglifyJS via Grunt task's options:
 
 ```js
         rjs: {
@@ -323,6 +322,7 @@ Here's example how to pass options to UglifyJS via Grunt task's options:
 ```
 
 ## Release History
+ * 2016-12-26	v0.1.5	Updated README, updated dev-dependencies
  * 2015-12-07	v0.1.3	fix for NPM3 support
  * 2015-09-01	v0.1.0  Updated README
  * 2013-12-03	v0.1.0	Task submitted
