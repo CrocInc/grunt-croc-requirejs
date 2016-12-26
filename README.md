@@ -41,7 +41,8 @@ define([
 	"xcss!lib/ui/styles/jquery.blocked.css"
 ], function ($) {
 });
-```  
+```
+
 Here we imported a CSS-file (`jquery.blocked.css`) as AMD-module.   
 In run-time `xcss` plugin requests the CSS-file via XHR and adds its content into `STYLE` tag (under `HEAD`). So in a development environment CSS-script are fetched and added into page's `STYLE`. The nice thing is that modules control their CSS-files on their own.  
 NOTE: All imports of CSS-files in all modules use a single `STYLE` tag to be IE-friendly.  
@@ -181,14 +182,14 @@ Type: `String`
 Default value: `none`  
 Required: no  
 
-Optimization method of *.js files in terms of RJS: none, uglify, uglify2.
+Optimization method of *.js files in terms of RJS: `none`, `uglify`.
 
 #### optimizeCss
 Type: `String`  
 Default value: `none`  
 Required: no  
 
-Optimization method of *.css files in terms of RJS: none, standard, standard.keepLines.
+Optimization method of *.css files in terms of RJS: `none`, `standard`, `standard.keepLines`.
 
 #### generateSourceMaps
 Type: `Boolean`  
@@ -220,7 +221,7 @@ A locale to bundle - i.e. resources imported via `i18n` rjs plugin will be inclu
 The value will be used as `locale` option for r.js.
 
 
-### Project structure assumptions
+## Project structure assumptions
 
 The plugin assumes that client-side of a project has the following structure:
 
@@ -229,18 +230,18 @@ The plugin assumes that client-side of a project has the following structure:
 * client root contains subfolders which are treated as `layers`. Usually we have `app`, `lib` and `vendor` folders (the app can also have any other folders). Scripts (*.js) which are in these layer-folders will be bundled together.
 
 
-### Core concepts
+## Core concepts
 
-#### rjs optimizer
+### rjs optimizer
 RequireJS provides rjs optimizer for building optimized version of apps. rjs is a script to be run under node.js. It has pletly of options - see [the doc](http://requirejs.org/docs/optimization.html).
 This plugin grunt-croc-requirejs is just a wrapper around rjs optimizer.
 
 
-#### Root modules
+### Root modules
 `modules` option can specifies a bunch of files which will be treated as _root modules_. If `modules` options isn't specified then all *.js under `inputDir` will be treated as root modules.
 rjs optimizer has two modes: optimizing directory and optimizing files. The plugin uses the latter mode. Files for rjs optimizer are specified in `modules` option. So these files we're callign as _root modules_.
 
-#### Layers
+### Layers
 
 By default if you supply a main script to rjs optimizer it'll combine all depedency tree into a single minified script. rjs does support layers and shared scripts for multi-page applications - [see this official sample](https://github.com/requirejs/example-multipage). But it requires to do a lot of configuration.
 This plugin supports splitting scripts onto layers depending on folder structure. For example let's consider an application has the following structure:
@@ -272,9 +273,9 @@ Here all client code is placed under `client` folder (_client root_). Under clie
 * vendor-layer.js - all scripts from vendor folder
 
 
-### Usage Examples
+## Usage Examples
 
-#### Common options
+### Common options
 ```js
 grunt.initConfig({
 		rjs: {
@@ -289,7 +290,7 @@ grunt.initConfig({
 						}
 					},
 					genericCssUrl: 'content/generic.css',
-					optimizeJs: 'uglify2',
+					optimizeJs: 'uglify',
 					optimizeCss: 'standard',
 					generateSourceMaps: true,
 					bundledLocale: 'ru'
@@ -299,6 +300,28 @@ grunt.initConfig({
 })
 ```
 
+### Passing options for UglifyJS
+If `optimizeJs` option specified as `uglify` then output files will be processed with [UglifyJS](https://github.com/mishoo/UglifyJS). It also has differeny options which you'd want to override.
+For example, by default UglifyJS removes quotes for keys if they are not reserved words. This behavior can lead to runtime errors in IE8.  
+Here's example how to pass options to UglifyJS via Grunt task's options:
+
+```js
+        rjs: {
+            dist: {
+                options: {
+                    optimizeJs: 'uglify',
+					requireConfig: {
+						uglify: {
+							output: {
+								quote_keys: true
+							}
+						}
+					},
+                }
+            }
+        }
+```
+
 ## Release History
  * 2015-12-07	v0.1.3	fix for NPM3 support
  * 2015-09-01	v0.1.0  Updated README
@@ -306,6 +329,6 @@ grunt.initConfig({
  * 2013-08-27	v0.0.0	Work started
 
 ---
-Task submitted by [Sergei Dorogin](http://dorogin.com)
+Task submitted by [Sergei Dorogin](http://about.dorogin.com)
 
-(c) Copyright CROC Inc. 2013-2015
+(c) Copyright CROC Inc. 2013-2017
