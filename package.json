@@ -14,12 +14,7 @@
   "bugs": {
     "url": "https://github.com/CrocInc/grunt-croc-requirejs/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/CrocInc/grunt-croc-requirejs/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
   "main": "Gruntfile.js",
   "dependencies": {
     "requirejs": "^2.3.2"
