@@ -160,7 +160,7 @@ module.exports = function(grunt) {
 				modules: {}
 			}, {
 				name: "lib-layer",
-				dir: "lib",
+				dir: ["lib", "modules"],
 				modules: {}
 			}];
 
@@ -200,16 +200,22 @@ module.exports = function(grunt) {
 					// put moduleName into some layer basing on its path
 					layers.some(function (layer) {
 						var relPath = path.relative(path.resolve(config.dir), modulePath);
-						if (relPath.indexOf(layer.dir) === 0) {
-							if (options.ignoreModules) {
-								if (options.ignoreModules.some(function (m) {
-									return m === moduleName;
-								})) {
-									return;
-								}
-							}
-							layer.modules[moduleName] = true;
+						var layerDir = layer.dir;
+						if (!Array.isArray(layerDir)) {
+							layerDir = [layerDir];
 						}
+						layerDir.forEach(function(dir) {
+							if (relPath.indexOf(dir) === 0) {
+								if (options.ignoreModules) {
+									if (options.ignoreModules.some(function (m) {
+										return m === moduleName;
+									})) {
+										return;
+									}
+								}
+								layer.modules[moduleName] = true;
+							}
+						});
 					});
 					if (moduleName.indexOf('xhtmpl!') === 0) {
 						modulesToDelete.push(path.join(outputDir, modulePath.slice('xhtmpl!'.length)));

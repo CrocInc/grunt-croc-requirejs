@@ -1,7 +1,7 @@
 {
   "name": "grunt-croc-requirejs",
   "description": "Grunt plugin for building RequireJS-based applications with optimizing js, css and Handlebars templates",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "homepage": "https://github.com/CrocInc/grunt-croc-requirejs",
   "author": {
     "name": "Sergei Dorogin",

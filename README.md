@@ -268,8 +268,8 @@ This plugin supports splitting scripts onto layers depending on folder structure
 Here all client code is placed under `client` folder (_client root_). Under client root we can see `app`, `lib`, `vendor` and some other folders. They will layers names. After optimization we'll get:  
 
 * main.js - all scripts imported from main.js except those which included into lib/vendor layers 
-* lib-layer.js - all scripts from lib folder (which are used by other scripts starting from main.js) 
-* vendor-layer.js - all scripts from vendor folder
+* lib-layer.js - all scripts from "lib" and "modules" folders (which are used by other scripts starting from main.js) 
+* vendor-layer.js - all scripts from "vendor" folder
 
 
 ## Usage Examples
@@ -322,6 +322,7 @@ Here's example how to pass options into UglifyJS via Grunt task's options:
 ```
 
 ## Release History
+ * 2017-08-28	v0.2.0	Support multiple folders for a layer (by default modules from "lib" and "modules" folders go to "lib-layer")
  * 2016-12-26	v0.1.5	Updated README, updated dev-dependencies
  * 2015-12-07	v0.1.3	fix for NPM3 support
  * 2015-09-01	v0.1.0  Updated README
