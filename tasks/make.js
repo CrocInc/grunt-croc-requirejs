@@ -337,7 +337,25 @@ module.exports = function(grunt) {
 					override: mainModuleOverride
 				});
 			});
-			
+			// options for particular layers
+			if (options.layerOverrides) {
+				config.modules.forEach(function (layer) {
+					var name = layer.name;
+					var overrides = options.layerOverrides[name];
+					if (overrides) {
+						// convert task's format into rjs format:
+						if (overrides.optimizeJs) {
+							overrides.optimize = overrides.optimizeJs;
+						}
+						if (layer.override) {
+							layer.override = lang.extendEx(layer.override, overrides, {deep: true});
+						} else {
+							layer.override = overrides;
+						}
+					}
+				});
+			}
+
 			requirejs.optimize(
 				config,
 				lang.safeCallback(optimizeBootModules),

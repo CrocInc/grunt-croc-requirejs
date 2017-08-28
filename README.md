@@ -219,6 +219,24 @@ Required: no
 A locale to bundle - i.e. resources imported via `i18n` rjs plugin will be included into optimized js-modules and all other resources will be left unchanged.   
 The value will be used as `locale` option for r.js.
 
+#### layerOverrides
+Type: `Object`  
+Required: no  
+
+An object-map with options overrides for particilar layers.  
+For example you want to minify/uglify all modules except main and report-main:  
+```
+			optimizeJs: 'uglify2'
+			layerOverrides: {
+				"main": {
+					optimizeJs: "none"
+				},
+				"report-main": {
+					optimizeJs: "none"
+				}
+			}
+```
+
 
 ## Project structure assumptions
 
@@ -322,7 +340,8 @@ Here's example how to pass options into UglifyJS via Grunt task's options:
 ```
 
 ## Release History
- * 2017-08-28	v0.2.0	Support multiple folders for a layer (by default modules from "lib" and "modules" folders go to "lib-layer")
+ * 2017-08-28	v0.2.0	Support multiple folders for a layer (by default modules from "lib" and "modules" folders go to "lib-layer").  
+ 						Option `layerOverrides` for overriding options for particular layers.
  * 2016-12-26	v0.1.5	Updated README, updated dev-dependencies
  * 2015-12-07	v0.1.3	fix for NPM3 support
  * 2015-09-01	v0.1.0  Updated README
