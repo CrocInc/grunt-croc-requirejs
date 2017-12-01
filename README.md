@@ -54,6 +54,7 @@ But it's not enough. In run-time for optimized (or built) application `xcss` plu
  
 For loading CSS-files the plugin uses standard RJS's plugin [text](http://requirejs.org/docs/api.html#text "text"). It should be registered with alias "text".
 
+
 ### Handlebars templates 
 `xhtmpl` plugin allows a module to import its Handlebars dependencies as regular AMD-modules.  
 Usage example:
@@ -139,7 +140,6 @@ Required: no
 
 Directories under input dir with standalone scripts (not referenced by app modules, usually injected on server) to optimize.
 
-
 #### requireConfigFile
 Type: `String`  
 Default value: `require.config.json`  
@@ -160,7 +160,6 @@ Default value: `undefined`
 Required: no  
 
 RequireJS config JSON for output optimized application (will override all other configs).
-
 
 #### modules
 Type: `Array`  
@@ -219,22 +218,48 @@ Required: no
 A locale to bundle - i.e. resources imported via `i18n` rjs plugin will be included into optimized js-modules and all other resources will be left unchanged.   
 The value will be used as `locale` option for r.js.
 
+
+#### layers
+Type: `Object`  
+Default value: `undefined`  
+Required: no  
+
+An object-map with a mapping of layer name to folder or array of folders.  
+By default (if no option specified) task will use:
+```json
+{ 
+	"lib-layer": ["lib","modules"],
+	"vendor-layer": "vendor"
+}
+```
+That means that scripts from "lib" and "modules" folders will be combined into "lib-layer" script, and scripts from "vendor" folder - into "vendor-layer".  
+An example of override:
+```json
+{
+	"lib-layer": "lib",
+	"modules": "modules",
+	"vendor-layer": "vendor"
+},
+```
+
 #### layerOverrides
 Type: `Object`  
 Required: no  
 
 An object-map with options overrides for particilar layers.  
 For example you want to minify/uglify all modules except main and report-main:  
-```
-			optimizeJs: 'uglify2'
-			layerOverrides: {
-				"main": {
-					optimizeJs: "none"
-				},
-				"report-main": {
-					optimizeJs: "none"
-				}
+```json
+{
+		"optimizeJs": "uglify2",
+		"layerOverrides": {
+			"main": {
+				"optimizeJs": "none"
+			},
+			"report-main": {
+				"optimizeJs": "none"
 			}
+		}
+}
 ```
 
 
@@ -340,6 +365,7 @@ Here's example how to pass options into UglifyJS via Grunt task's options:
 ```
 
 ## Release History
+ * 2017-12-01   v0.3.0  Added `layers` option to override folder-layer mapping
  * 2017-08-28	v0.2.0	Support multiple folders for a layer (by default modules from "lib" and "modules" folders go to "lib-layer").  
  						Option `layerOverrides` for overriding options for particular layers.
  * 2016-12-26	v0.1.5	Updated README, updated dev-dependencies

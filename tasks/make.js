@@ -65,7 +65,10 @@ module.exports = function(grunt) {
 
 			// Array of main modules. If empty then all *.js files directly under input directory will be used.
 			modules: [],
+			// Array of module names to ignore
 			ignoreModules: [],
+			// An optinal map to override layer-folder mapings, default: `{ "lib-layer": ["lib","modules"], "vendor-layer": "vendor" }`
+			layers: undefined,
 
 			// Optimization method of *.js files in terms of RJS: none, uglify, uglify2
 			optimizeJs: 'none',
@@ -154,7 +157,19 @@ module.exports = function(grunt) {
 	    var done = this.async();
 
 		// layers: we'll split all js modules into layers basing on their folders
-		var layers = [{
+		var layers = [];
+		debugger;
+		if (options.layers) {
+			// overridden layers via options
+			lang.forEach(options.layers, function (dir, name) {
+				layers.push({
+					name: name,
+					dir: dir,
+					modules: {}
+				});
+			});
+		} else {
+			layers = [{
 				name: "vendor-layer",
 				dir: "vendor",
 				modules: {}
@@ -163,6 +178,7 @@ module.exports = function(grunt) {
 				dir: ["lib", "modules"],
 				modules: {}
 			}];
+		}
 
 		// STEP 0: copy source files into 'build' dir
 		grunt.log.write('Copying source files into build dir...');
